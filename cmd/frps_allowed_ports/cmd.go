@@ -62,10 +62,12 @@ func ParseportsFromFile(file string) (map[string][]string, error) {
 	result := make(map[string][]string)
 	rows := strings.Split(string(buf), "\n")
 	for _, row := range rows {
-		parts := strings.Split(row, "=")
+		parts := strings.SplitN(row, "=", 2)
+		if parts == nil || len(parts) != 2 {
+			return nil, fmt.Errorf("invalid format in ports file: %s", row)
+		}
 		key := parts[0]
-		value := parts[1]
-		result[key] = append(result[key], value)
+		result[key] = append(result[key], parts[1])
 	}
 	return result, nil
 
